@@ -1,5 +1,4 @@
 from pymycobot import MyCobot280
-import keyboard
 
 mc = MyCobot280('/dev/ttyAMA0', 1000000)
 
@@ -7,9 +6,5 @@ mc = MyCobot280('/dev/ttyAMA0', 1000000)
 angles = mc.get_angles()
 print(angles)
 
-mc.send_angles([0, 0, 0, 0, 0, 0], 30)
-
-initial_angle = 0
-
-while True:
-    print(keyboard.read_key())
+mc.send_angles([0,0,0,0,0,0], 30)
+print("arm moved!")
