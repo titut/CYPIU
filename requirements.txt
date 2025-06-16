@@ -1,4 +1,8 @@
+cffi==1.17.1
+hidapi-usb==0.3.2
 modern-robotics==1.1.1
 numpy==2.2.6
+pycparser==2.22
 pydualsense==0.7.5
-pymycobot
+pymycobot==3.9.8
+pyserial==3.5
