@@ -1,0 +1,4 @@
+modern-robotics==1.1.1
+numpy==2.2.6
+pydualsense==0.7.5
+pymycobot
