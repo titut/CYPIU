@@ -15,4 +15,5 @@ mc.send_angles([0, 0, 0, 0, 0, 0], 30)
 mc.send_angles([90, 0, 0, 0, 0, 0], 30)
 mc.send_angles([-90, 0, 0, 0, 0, 0], 30)
 
-print("arm moved!")
+plan = mc.get_angles_plan()
+print(plan)
