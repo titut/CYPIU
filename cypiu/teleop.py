@@ -20,14 +20,18 @@ class Teleop(Node):
         super().__init__("teleop")
 
         # Initialize controller
+        self.get_logger().info("Connecting to Robot...")
         self.mc = MyCobot280("/dev/ttyAMA0", 1000000) # !IMPORTANT ONLY USE READ FUNCTIONS ONLY
+        self.get_logger().info("Connected!")
 
         # Initialize dualsense controller
+        self.get_logger().info("Connecting to Controller")
         self.ds = pydualsense()
         self.ds.init()
         self.ds.circle_pressed += self.read_joint_angles
         self.ds.cross_pressed += self.go_home
         self.ds.square_pressed += self.random_location
+        self.get_logger().info("Connected")
 
         # Initialize publisher
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
