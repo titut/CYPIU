@@ -14,7 +14,7 @@ class MoveArm(Node):
     """
 
     def __init__(self):
-        super().__init__("Move Arm")
+        super().__init__("move_arm")
         self.subscription = self.create_subscription(
             Float32MultiArray, "joint_angles", self.listener_callback, 10
         )
