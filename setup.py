@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = "CYPIU"
+package_name = "cypiu"
 
 setup(
     name=package_name,
@@ -18,6 +18,6 @@ setup(
     license="Apache-2.0",
     tests_require=["pytest"],
     entry_points={
-        "console_scripts": ["move = CYPIU.movearm:main"],
+        "console_scripts": ["move = cypiu.movearm:main"],
     },
 )
