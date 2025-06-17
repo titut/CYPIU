@@ -8,6 +8,8 @@ from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
 
 from pydualsense import pydualsense
+from pymycobot import MyCobot280
+import random
 
 class Teleop(Node):
     """
@@ -16,13 +18,53 @@ class Teleop(Node):
 
     def __init__(self):
         super().__init__("teleop")
+
         # Initialize controller
+        self.mc = MyCobot280("/dev/ttyAMA0", 1000000) # !IMPORTANT ONLY USE READ FUNCTIONS ONLY
+
+        # Initialize dualsense controller
         self.ds = pydualsense()
         self.ds.init()
-        self.ds.circle_pressed += self.on_circle_pressed
+        self.ds.circle_pressed += self.read_joint_angles
+        self.ds.cross_pressed += self.go_home
+        self.ds.square_pressed += self.random_location
 
-    def on_circle_pressed(self, state):
-        self.get_logger().info(f"Circle button {'pressed' if state else 'released'}")
+        # Initialize publisher
+        self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
+
+    def read_joint_angles(self, state):
+        if state:
+            self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+
+    def go_home(self, state):
+        if state:
+            msg = Float32MultiArray()
+            msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.publisher.publish(msg)
+            self.get_logger().info(f"Sent Command to go home!")
+
+    def random_location(self, state):
+        if state:
+            random_joint_angles = []
+            for i in range(5):
+                random_joint_angles.append(float(random.randrange(0, 90)))
+            random_joint_angles.append(0.0)
+            self.get_logger().info(f"Published random angles: {random_joint_angles}")
+            msg = Float32MultiArray()
+            msg.data = random_joint_angles
+            self.publisher.publish(msg)
+
+    def on_dpad_up(self, state):
+        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+
+    def on_dpad_down(self, state):
+        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+
+    def on_dpad_left(self, state):
+        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+
+    def on_dpad_right(self, state):
+        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
 
 def main(args=None):
     rclpy.init(args=args)
