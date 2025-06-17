@@ -7,6 +7,8 @@ from rclpy.node import Node
 
 from std_msgs.msg import Float32MultiArray
 
+from pymycobot import MyCobot280
+
 
 class MoveArm(Node):
     """
@@ -15,12 +17,14 @@ class MoveArm(Node):
 
     def __init__(self):
         super().__init__("move_arm")
+        self.mc = MyCobot280("/dev/ttyAMA0", 1000000)
         self.subscription = self.create_subscription(
             Float32MultiArray, "joint_angles", self.listener_callback, 10
         )
 
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg.data)
+        self.mc.send_angles(msg.data, 30)
 
 
 def main(args=None):
