@@ -59,7 +59,12 @@ class Teleop(Node):
             self.publisher.publish(msg)
 
     def on_dpad_up(self, state):
-        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+        if state:
+            cur_coords = self.mc.get_coords()
+            cur_coords[0] = cur_coords[0] + 10
+            msg = Float32MultiArray()
+            msg.data = self.mc.solve_inv_kinematics(cur_coords, self.mc.get_angles())
+            self.publisher.publish(msg)
 
     def on_dpad_down(self, state):
         self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
