@@ -26,13 +26,12 @@ class RandomLoc(Node):
     def timer_callback(self):
         random_joint_angles = []
         for i in range(5):
-            random_joint_angles.append(random.randrange(0, 90))
-        random_joint_angles.append(0)
+            random_joint_angles.append(float(random.randrange(0, 90)))
+        random_joint_angles.append(0.0)
         self.get_logger().info(f"Published random angles: {random_joint_angles}")
-        """ msg = Float32MultiArray()
+        msg = Float32MultiArray()
         msg.data = random_joint_angles
         self.publisher.publish(msg)
-        self.get_logger().info(f"Published random angles: {random_joint_angles}") """
 
 
 def main(args=None):
