@@ -26,7 +26,7 @@ S_list = [
 
 def forward_kinematics(theta_list):
     """
-    Given a list of angles (theta_list) in degrees of the robot, return the
+    Given a list of angles (theta_list) in radians of the robot, return the
     spatial position of the robot mapping to the given theta_list.
 
     NOTE: if angles are not within bound, the function will return False
@@ -38,7 +38,7 @@ def forward_kinematics(theta_list):
         theta 6: -180 ~ +180
 
     Args:
-        theta_list: [list] (deg)
+        theta_list: [list] (rad)
             0: theta 1
             1: theta 2
             2: theta 3
@@ -50,10 +50,7 @@ def forward_kinematics(theta_list):
         Angles within bounds: (tuple) (m)
             0: x displacement,
             1: y displacement,
-            2: z displacement,
-            3: x rotation,
-            4: y rotation,
-            5: z rotation
+            2: z displacement
         Angles out of bounds: False
     """
     no_of_joints = len(theta_list)
