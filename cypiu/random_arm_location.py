@@ -1,5 +1,5 @@
 """
-ROS node to move myCobot 280 arm
+ROS node to generate random configurations for myCobot 280
 """
 
 # ROS node import

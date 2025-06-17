@@ -23,7 +23,8 @@ setup(
     entry_points={
         "console_scripts": [
             "move = cypiu.movearm:main", 
-            "random = cypiu.random_arm_location:main"
+            "random = cypiu.random_arm_location:main",
+            "teleop = cypiu.teleop:main"
         ],
     },
 )
