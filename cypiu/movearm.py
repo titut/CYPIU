@@ -18,13 +18,26 @@ class MoveArm(Node):
     def __init__(self):
         super().__init__("move_arm")
         self.mc = MyCobot280("/dev/ttyAMA0", 1000000)
+        self.joint_angles_queue = []
         self.subscription = self.create_subscription(
             Float32MultiArray, "joint_angles", self.listener_callback, 10
         )
+        timer_period = 0.1  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
 
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg.data)
-        self.mc.send_angles(list(msg.data), 30)
+        self.joint_angles_queue.append(list(msg.data))
+
+    def timer_callback(self):
+        if not self.mc.is_moving() and len(self.joint_angles_queue) != 0:
+            self.get_logger().info(
+                (
+                    f"Joint angle queue is {len(self.joint_angles_queue)} items"
+                    f"long, moving to next location {self.joint_angles_queue[0]}"
+                )
+            )
+            self.mc.send_angles(self.joint_angles_queue.pop(0), 30)
 
 
 def main(args=None):
