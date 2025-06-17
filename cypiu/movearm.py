@@ -24,7 +24,7 @@ class MoveArm(Node):
 
     def listener_callback(self, msg):
         self.get_logger().info('I heard: "%s"' % msg.data)
-        self.mc.send_angles(msg.data, 30)
+        self.mc.send_angles(list(msg.data), 30)
 
 
 def main(args=None):
