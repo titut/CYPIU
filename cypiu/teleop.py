@@ -31,6 +31,8 @@ class Teleop(Node):
         self.ds.circle_pressed += self.read_joint_angles
         self.ds.cross_pressed += self.go_home
         self.ds.square_pressed += self.random_location
+
+        self.ds.dpad_up += self.on_dpad_up
         self.get_logger().info("Connected")
 
         # Initialize publisher
