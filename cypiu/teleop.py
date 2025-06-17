@@ -21,8 +21,8 @@ class Teleop(Node):
         self.ds.init()
         self.ds.circle_pressed += self.on_circle_pressed
 
-    def on_circle_pressed(state):
-        print(f"Circle button {'pressed' if state else 'released'}")
+    def on_circle_pressed(self, state):
+        self.get_logger().info(f"Circle button {'pressed' if state else 'released'}")
 
 def main(args=None):
     rclpy.init(args=args)
