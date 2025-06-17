@@ -19,7 +19,7 @@ class Teleop(Node):
         # Initialize controller
         self.ds = pydualsense()
         self.ds.init()
-        self.ds.ds.circle_pressed += self.on_circle_pressed
+        self.ds.circle_pressed += self.on_circle_pressed
 
     def on_circle_pressed(state):
         print(f"Circle button {'pressed' if state else 'released'}")
