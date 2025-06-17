@@ -64,6 +64,7 @@ class Teleop(Node):
             cur_coords[0] = cur_coords[0] + 10
             msg = Float32MultiArray()
             msg.data = self.mc.solve_inv_kinematics(cur_coords, self.mc.get_angles())
+            self.get_logger().info(f"Published new angles: {msg.data}")
             self.publisher.publish(msg)
 
     def on_dpad_down(self, state):
