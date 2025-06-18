@@ -73,13 +73,14 @@ class Teleop(Node):
 
     def on_dpad_up(self, state):
         if state:
-            cur_coords = forward_kinematics(self.current_angles)
+            cur_angles = deg2rad(self.current_angles)
+            cur_coords = forward_kinematics(cur_angles)
             self.get_logger().info(f"Sovling FK")
-
             
             new_coords = [cur_coords[0]+0.05, cur_coords[1], cur_coords[2]]
             self.get_logger().info(f"Sovling IK")
-            new_angles, status = inverse_kinematics(self.current_angles, new_coords)
+            new_angles, status = inverse_kinematics(cur_angles, new_coords)
+            
             self.get_logger().info(f"Move by -x +5cm.")
             msg = Float32MultiArray()
             msg.data = rad2deg(new_angles)
