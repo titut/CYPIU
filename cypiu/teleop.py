@@ -26,6 +26,7 @@ class Teleop(Node):
         self.get_logger().info("Connecting to Robot...")
         self.mc = MyCobot280("/dev/ttyAMA0", 1000000) # !IMPORTANT ONLY USE READ FUNCTIONS ONLY
         self.get_logger().info("Connected!")
+        self.current_angles = [0,0,0,0,0,0]
 
         # Initialize dualsense controller
         self.get_logger().info("Connecting to Controller")
@@ -40,6 +41,13 @@ class Teleop(Node):
 
         # Initialize publisher
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
+
+        # Initialize subscriber
+        self.subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
+
+    def on_current_angles(self, msg):
+        self.current_angles = msg.data
+
 
     def read_joint_angles(self, state):
         if state:
@@ -65,15 +73,13 @@ class Teleop(Node):
 
     def on_dpad_up(self, state):
         if state:
-            cur_angle = deg2rad(self.mc.get_angles())
-            self.get_logger().info(f"Getting angles")
-            cur_coords = forward_kinematics(cur_angle)
+            cur_coords = forward_kinematics(self.current_angles)
             self.get_logger().info(f"Sovling FK")
 
             
             new_coords = [cur_coords[0]+0.05, cur_coords[1], cur_coords[2]]
             self.get_logger().info(f"Sovling IK")
-            new_angles, status = inverse_kinematics(cur_angle, new_coords)
+            new_angles, status = inverse_kinematics(self.current_angles, new_coords)
             self.get_logger().info(f"Move by -x +5cm.")
             msg = Float32MultiArray()
             msg.data = rad2deg(new_angles)
