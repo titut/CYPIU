@@ -10,6 +10,9 @@ from std_msgs.msg import Float32MultiArray
 from pydualsense import pydualsense
 from pymycobot import MyCobot280
 import random
+from modules.fk import forward_kinematics
+from modules.ik import inverse_kinematics
+from modules.util import deg2rad, rad2deg
 
 class Teleop(Node):
     """
@@ -62,8 +65,14 @@ class Teleop(Node):
 
     def on_dpad_up(self, state):
         if state:
-            cur_coords = self.mc.get_coords()
-            self.get_logger().info(f"Current Coords: {cur_coords}")
+            cur_angle = deg2rad(self.mc.get_angles())
+            cur_coords = forward_kinematics(cur_angle)
+            cur_coords[0] = cur_coords[0] + 0.01
+            new_angles, status = inverse_kinematics(cur_angle, cur_coords)
+            self.get_logger().info(f"Move by -x +1cm.")
+            msg = Float32MultiArray()
+            msg.data = rad2deg(new_angles)
+            self.publisher.publish(msg)
 
     def on_dpad_down(self, state):
         self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
