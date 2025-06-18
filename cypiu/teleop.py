@@ -68,9 +68,9 @@ class Teleop(Node):
             cur_angle = deg2rad(self.mc.get_angles())
             cur_coords = forward_kinematics(cur_angle)
             
-            new_coords = [cur_coords[0]+0.01, cur_coords[1], cur_coords[2]]
+            new_coords = [cur_coords[0]+0.05, cur_coords[1], cur_coords[2]]
             new_angles, status = inverse_kinematics(cur_angle, new_coords)
-            self.get_logger().info(f"Move by -x +1cm.")
+            self.get_logger().info(f"Move by -x +5cm.")
             msg = Float32MultiArray()
             msg.data = rad2deg(new_angles)
             self.publisher.publish(msg)
