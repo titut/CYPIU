@@ -73,27 +73,34 @@ class Teleop(Node):
 
     def on_dpad_up(self, state):
         if state:
-            cur_angles = deg2rad(self.current_angles)
-            cur_coords = forward_kinematics(cur_angles)
-            self.get_logger().info(f"Sovling FK")
-            
-            new_coords = [cur_coords[0]+0.05, cur_coords[1], cur_coords[2]]
-            self.get_logger().info(f"Sovling IK")
-            new_angles, status = inverse_kinematics(cur_angles, new_coords)
-            
-            self.get_logger().info(f"Move by -x +5cm.")
-            msg = Float32MultiArray()
-            msg.data = rad2deg(new_angles)
-            self.publisher.publish(msg)
+            self.teleop_move_xyz(0, 1)
 
     def on_dpad_down(self, state):
-        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+        if state:
+            self.teleop_move_xyz(0, -1)
 
     def on_dpad_left(self, state):
-        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+        if state:
+            self.teleop_move_xyz(1, 1)
 
     def on_dpad_right(self, state):
-        self.get_logger().info(f"Current Robot Orientation: {self.mc.get_angles()}")
+        if state:
+            self.teleop_move_xyz(1, -1)
+
+    def teleop_move_xyz(self, direction_id, direction):
+        cur_angles = deg2rad(self.current_angles)
+        cur_coords = forward_kinematics(cur_angles)
+        self.get_logger().info(f"Sovling FK")
+        
+        new_coords = [cur_coords[0], cur_coords[1], cur_coords[2]]
+        new_coords[direction_id] = new_coords[direction_id] + (0.05 * direction)
+        self.get_logger().info(f"Sovling IK")
+        new_angles, status = inverse_kinematics(cur_angles, new_coords)
+
+        self.get_logger().info(f"Moving by {direction_id} in {direction}")
+        msg = Float32MultiArray()
+        msg.data = rad2deg(new_angles)
+        self.publisher.publish(msg)
 
 def main(args=None):
     rclpy.init(args=args)
