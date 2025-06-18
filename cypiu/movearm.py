@@ -22,6 +22,9 @@ class MoveArm(Node):
         self.subscription = self.create_subscription(
             Float32MultiArray, "joint_angles", self.listener_callback, 10
         )
+        self.publisher = self.create_publisher(
+            Float32MultiArray, "current_angles", 10
+        )
         timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
@@ -30,6 +33,9 @@ class MoveArm(Node):
         self.joint_angles_queue.append(list(msg.data))
 
     def timer_callback(self):
+        msg = Float32MultiArray()
+        msg.data = self.mc.get_angles()
+        self.publisher.publish(msg)
         if not self.mc.is_moving() and len(self.joint_angles_queue) != 0:
             self.get_logger().info(
                 (
