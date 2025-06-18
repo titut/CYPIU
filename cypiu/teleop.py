@@ -10,9 +10,9 @@ from std_msgs.msg import Float32MultiArray
 from pydualsense import pydualsense
 from pymycobot import MyCobot280
 import random
-from modules.fk import forward_kinematics
-from modules.ik import inverse_kinematics
-from modules.util import deg2rad, rad2deg
+from cypiu.modules.fk import forward_kinematics
+from cypiu.modules.ik import inverse_kinematics
+from cypiu.modules.util import deg2rad, rad2deg
 
 class Teleop(Node):
     """
