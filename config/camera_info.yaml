@@ -1,0 +1,20 @@
+image_width: 640
+image_height: 480
+camera_name: cypiu_eyes
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [771.45200541, 0, 300.15376794, 0, 767.3902459, 234.77829549, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.77566081, 1.26164924, 0.00782758, 0.00146364, -1.45286314]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [672.38320432, 0, 295.64986471, 0, 0, 710.5203489, 236.41875831, 0, 0, 0, 1, 0]
