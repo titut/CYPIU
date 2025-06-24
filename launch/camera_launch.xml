@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <include file="$(find-pkg-share usb_cam)/launch/camera.launch.py"/>
+    <node pkg="apriltag_ros" exec="apriltag_node" namespace="apriltag">
+        <remap from="/image_rect" to="/camera1/image_raw"/>
+        <remap from="/camera_info" to="/camera1/camera_info"/>
+        <param from="$(find-pkg-share cypiu)/config/tags.yaml"/>
+    </node>
+</launch>
