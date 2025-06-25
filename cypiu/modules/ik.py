@@ -68,7 +68,7 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
 
     for i in range(max_iters):
         # Compute forward kinematics position
-        p_current = forward_kinematics(theta)
+        p_current, T = forward_kinematics(theta)
 
         # Compute error
         error = p_desired - np.array(p_current)
