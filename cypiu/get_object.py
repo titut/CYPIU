@@ -37,6 +37,7 @@ class GetObject(Node):
         self.timer = self.create_timer(0.1, self.on_timer)
 
     def on_current_angles(self, msg):
+        self.get_logger().info(f"Received angles: {msg.data}")
         self.current_angles = msg.data
 
     def on_timer(self):
