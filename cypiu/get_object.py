@@ -37,7 +37,6 @@ class GetObject(Node):
         self.timer = self.create_timer(0.1, self.on_timer)
 
     def on_current_angles(self, msg):
-        self.get_logger().info(f"Received angles: {msg.data}")
         self.current_angles = msg.data
 
     def on_timer(self):
@@ -62,8 +61,6 @@ class GetObject(Node):
         cur_coords, t_sb = forward_kinematics(cur_angles)
 
         t_sc = t_sb @ t_bc
-        self.get_logger().info(f"T_sb = {t_sb}")
-        self.get_logger().info(f"T_bc = {t_bc}")
         self.get_logger().info(f"T_sc = {t_sc}")
 
 def main(args=None):
