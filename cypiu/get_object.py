@@ -61,6 +61,8 @@ class GetObject(Node):
         cur_coords, t_sb = forward_kinematics(cur_angles)
 
         t_sc = t_sb @ t_bc
+        self.get_logger().info(f"T_sb = {t_sb}")
+        self.get_logger().info(f"T_bc = {t_bc}")
         self.get_logger().info(f"T_sc = {t_sc}")
 
 def main(args=None):
