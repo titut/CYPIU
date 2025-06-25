@@ -14,7 +14,8 @@ from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 
 from cypiu.modules.fk import forward_kinematics
-from cypiu.modules.util import deg2rad
+from cypiu.modules.ik import inverse_kinematics
+from cypiu.modules.util import deg2rad, rad2deg
 
 import numpy as np
 
@@ -61,7 +62,15 @@ class GetObject(Node):
         cur_coords, t_sb = forward_kinematics(cur_angles)
 
         t_sc = t_sb @ t_bc
-        self.get_logger().info(f"T_sc = {t_sc}")
+        desired_ee = t_sc[0:3, 3]
+        self.get_logger().info(f"desired_ee = {desired_ee}")
+
+        soln, status = inverse_kinematics(cur_angles, desired_ee)
+        msg = Float32MultiArray()
+        msg.data = rad2deg(soln)
+        self.publisher.publish(msg)
+
+
 
 def main(args=None):
     rclpy.init(args=args)
