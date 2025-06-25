@@ -64,4 +64,4 @@ def forward_kinematics(theta_list):
     for i in range(0, no_of_joints):
         result = T[no_of_joints - 1 - i] @ result
 
-    return tuple(result[0:3, 3])
+    return list(result[0:3, 3]), result

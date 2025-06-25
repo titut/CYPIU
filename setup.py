@@ -25,7 +25,9 @@ setup(
         "console_scripts": [
             "move = cypiu.movearm:main", 
             "random = cypiu.random_arm_location:main",
-            "teleop = cypiu.teleop:main"
+            "teleop = cypiu.teleop:main",
+            "corners = cypiu.draw_corners:main",
+            "object = cypiu.get_object:main"
         ],
     },
 )
