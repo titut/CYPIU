@@ -39,8 +39,6 @@ class GetObject(Node):
         self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
         self.detection_subscriber = self.create_subscription(AprilTagDetectionArray, '/apriltag/detections', self.on_detections, 10)
 
-        self.timer = self.create_timer(0.1, self.on_timer)
-
     def on_current_angles(self, msg):
         self.current_angles = msg.data
 
