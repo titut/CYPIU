@@ -47,8 +47,8 @@ class GetObject(Node):
             return
         try:
             t = self.tf_buffer.lookup_transform(
-                "object",
                 "camera",
+                "object",
                 msg.header.stamp)
         except TransformException as ex:
             self.get_logger().info(
