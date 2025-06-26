@@ -11,5 +11,5 @@ angles = mc.get_angles()
 
 print(angles)
 
-mc.send_angles([0, 0, 30, -30, 0, 0], 30)
+mc.send_angles([50, 0, 20, -84, 0, 0], 30)
 print("arm moved!")
