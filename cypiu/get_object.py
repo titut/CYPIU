@@ -26,7 +26,7 @@ class GetObject(Node):
 
     def __init__(self):
         super().__init__("get_object")
-        self.current_angles = [50, 0, 20, -84, 0, 0]
+        self.current_angles = [-1, -1, -1, -1, -1, -1]
 
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
 
@@ -41,6 +41,8 @@ class GetObject(Node):
         self.current_angles = msg.data
 
     def on_timer(self):
+        if self.current_angles[0] == -1:
+            return
         try:
             t = self.tf_buffer.lookup_transform(
                 "object",
