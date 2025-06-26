@@ -26,7 +26,7 @@ class GetObject(Node):
 
     def __init__(self):
         super().__init__("get_object")
-        self.current_angles = [0,0,0,0,0,0]
+        self.current_angles = [50, 0, 20, -84, 0, 0]
 
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
 
@@ -69,7 +69,6 @@ class GetObject(Node):
         msg = Float32MultiArray()
         msg.data = rad2deg(soln)
         self.publisher.publish(msg)
-
 
 
 def main(args=None):
