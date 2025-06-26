@@ -67,8 +67,8 @@ class GetObject(Node):
 
         t_sc = t_sb @ t_bc
         desired_ee = t_sc[0:3, 3]
-        self.get_logger().info(f"T = {t}")
-        self.get_logger().info(f"cur_angle = {self.current_angles}")
+        if desired_ee[2] < 0.08:
+            desired_ee[2] = 0.08
         self.get_logger().info(f"t_sb = {t_sb}")
         self.get_logger().info(f"t_bc = {t_bc}")
         self.get_logger().info(f"desired_ee = {desired_ee}")
