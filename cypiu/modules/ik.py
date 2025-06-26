@@ -3,7 +3,7 @@ Module with all functions relating to the Inverse Kinematics of the robot
 """
 
 import modern_robotics as mr
-from cypiu.modules.fk import forward_kinematics
+from fk import forward_kinematics
 import numpy as np
 
 M = np.array(
@@ -23,6 +23,34 @@ S_list = np.transpose(np.array([
     np.array([0, 0, 1, -0.06639, 0, 0]),
     np.array([1, 0, 0, 0, 0.41114, 0.06639]),
 ]))
+
+def line_search(theta, dtheta, p_desired, max_trials=10):
+    alpha = 1.0
+    for _ in range(max_trials):
+        theta_new = theta + alpha * dtheta
+
+        # Compute FK at new angles
+        p_new, T = forward_kinematics(theta_new)
+        error_new = np.array([0, 0, 0,
+                              p_desired[0] - p_new[0],
+                              p_desired[1] - p_new[1],
+                              p_desired[2] - p_new[2]])
+        err_norm = np.linalg.norm(error_new)
+
+        # Compute FK at current angles for comparison
+        p_current, T= forward_kinematics(theta)
+        error_current = np.array([0, 0, 0,
+                                  p_desired[0] - p_current[0],
+                                  p_desired[1] - p_current[1],
+                                  p_desired[2] - p_current[2]])
+        err_current_norm = np.linalg.norm(error_current)
+
+        if err_norm < err_current_norm:
+            return alpha  # Accept step size
+
+        alpha *= 0.5  # Try smaller step
+
+    return 0.0  # Step rejected — no improvement
 
 def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, damping=5e-4):
     """
@@ -87,11 +115,16 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
         J_damped_inv = JT @ np.linalg.inv(Js @ JT + (damping) * np.eye(6))
 
         dtheta = J_damped_inv @ error
-        max_step = 0.2
+        max_step = 2*err_norm
         dtheta = np.clip(dtheta, -max_step, max_step)
 
-
-        theta += dtheta
-        theta = np.clip(theta, [low for low, _ in joint_limits], [high for _, high in joint_limits])
+        alpha = line_search(theta, dtheta, p_desired)
+        if alpha > 0:
+            theta += alpha * dtheta
+            theta = np.clip(theta,
+                            [low for low, _ in joint_limits],
+                            [high for _, high in joint_limits])
+        else:
+            theta += np.random.uniform(-0.5, 0.5, size=theta.shape)
 
     return theta, False  # Did not converge

@@ -62,7 +62,7 @@ class GetObject(Node):
         cur_coords, t_sb = forward_kinematics(cur_angles)
 
         t_sc = t_sb @ t_bc
-        desired_ee = tuple(t_sc[0:3, 3])
+        desired_ee = t_sc[0:3, 3]
         self.get_logger().info(f"desired_ee = {desired_ee}")
 
         soln, status = inverse_kinematics(cur_angles, desired_ee)
