@@ -13,6 +13,9 @@ from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 
+from apriltag_msgs.msg import AprilTagDetectionArray
+from apriltag_msgs.msg import AprilTagDetection
+
 from cypiu.modules.fk import forward_kinematics
 from cypiu.modules.ik import inverse_kinematics
 from cypiu.modules.util import deg2rad, rad2deg
@@ -33,26 +36,27 @@ class GetObject(Node):
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
-        self.subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
+        self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
+        self.detection_subscriber = self.create_subscription(AprilTagDetectionArray, '/apriltag/detections', self.on_detections, 10)
 
         self.timer = self.create_timer(0.1, self.on_timer)
 
     def on_current_angles(self, msg):
         self.current_angles = msg.data
 
-    def on_timer(self):
+    def on_detections(self, msg: AprilTagDetectionArray):
         if self.current_angles[0] == -1:
             return
         try:
             t = self.tf_buffer.lookup_transform(
                 "object",
                 "camera",
-                rclpy.time.Time())
+                msg.header.stamp)
         except TransformException as ex:
             self.get_logger().info(
                 f'Could not transform camera to object: {ex}')
             return
-
+    
         t_bc = np.array([
             [1, 0, 0, t.transform.translation.x],
             [0, 1, 0, t.transform.translation.y],
