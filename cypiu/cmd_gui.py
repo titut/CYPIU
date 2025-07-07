@@ -40,7 +40,7 @@ class CmdGui(Node):
 
     def home(self):
         msg = Float32MultiArray()
-        msg.data = [0, 0, 0, 0, 0, 0]
+        msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.publisher.publish(msg)
 
 def main(args=None):
