@@ -27,6 +27,8 @@ class CmdGui(Node):
                 self.random_location()
             if user_input == "home":
                 self.home()
+            if user_input == "look":
+                self.look()
 
     def random_location(self):
         random_joint_angles = []
@@ -41,6 +43,11 @@ class CmdGui(Node):
     def home(self):
         msg = Float32MultiArray()
         msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.publisher.publish(msg)
+
+    def look(self):
+        msg = Float32MultiArray()
+        msg.data = [0.0, 45.0, -55.0, 40.0, 0.0, 0.0]
         self.publisher.publish(msg)
 
 def main(args=None):
