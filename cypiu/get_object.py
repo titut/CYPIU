@@ -82,10 +82,13 @@ class GetObject(Node):
         self.get_logger().info(f"desired_ee = {desired_ee}")
 
         soln, status = inverse_kinematics(cur_angles, desired_ee)
+
+        print(soln)
+        print(rad2deg(soln))
         
-        msg = Float32MultiArray()
+        """ msg = Float32MultiArray()
         msg.data = rad2deg(soln)
-        self.publisher.publish(msg)
+        self.publisher.publish(msg) """
 
 
 def main(args=None):
