@@ -6,6 +6,8 @@ ROS node to generate random configurations for myCobot 280
 import rclpy
 from rclpy.node import Node
 
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
+
 # ROS Messages
 from std_msgs.msg import Float32MultiArray
 
@@ -29,6 +31,12 @@ class GetObject(Node):
 
     def __init__(self):
         super().__init__("get_object")
+
+        qos_profile = QoSProfile(
+            depth=1,
+            reliability=QoSReliabilityPolicy.BEST_EFFORT,
+            history=QoSHistoryPolicy.KEEP_LAST
+        )
         self.current_angles = [-1, -1, -1, -1, -1, -1]
 
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
@@ -37,7 +45,7 @@ class GetObject(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
         self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
-        self.detection_subscriber = self.create_subscription(AprilTagDetectionArray, '/apriltag/detections', self.on_detections, 10)
+        self.detection_subscriber = self.create_subscription(AprilTagDetectionArray, '/apriltag/detections', self.on_detections, qos_profile)
 
     def on_current_angles(self, msg):
         self.current_angles = msg.data
@@ -74,6 +82,7 @@ class GetObject(Node):
         self.get_logger().info(f"desired_ee = {desired_ee}")
 
         soln, status = inverse_kinematics(cur_angles, desired_ee)
+        
         msg = Float32MultiArray()
         msg.data = rad2deg(soln)
         self.publisher.publish(msg)

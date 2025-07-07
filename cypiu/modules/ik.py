@@ -3,7 +3,7 @@ Module with all functions relating to the Inverse Kinematics of the robot
 """
 
 import modern_robotics as mr
-from fk import forward_kinematics
+from cypiu.modules.fk import forward_kinematics
 import numpy as np
 
 M = np.array(
@@ -71,6 +71,11 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
             0: x displacement
             1: y displacement
             2: z displacement
+
+            OR
+
+        desired_ee:Transformation matrix
+            np.array(4x4)
         tol: (float)
         max_iters: (int)
         damping: (float)
@@ -85,6 +90,7 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
             5: theta 6
 
     """
+    best_ans = (None, 100)
     theta = current_angle_pos.copy()
     p_desired = np.array(desired_ee)
     joint_limits = [(-np.radians(168), np.radians(168)),
@@ -98,11 +104,33 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
         # Compute forward kinematics position
         p_current, T = forward_kinematics(theta)
 
-        # Compute error
+        # Compute linear error
         error = p_desired - np.array(p_current)
-        error = np.array([0, 0, 0, error[0], error[1], error[2]])
+
+        # Computer Angular error
+        z_current = T[0:3, 2]
+        z_desired = np.array([0, 0, -1])
+
+        # Orientation error using angle-axis (only constrain z-axis alignment)
+        axis = np.cross(z_current, z_desired)
+        sin_theta = np.linalg.norm(axis)
+        cos_theta = np.dot(z_current, z_desired)
+        theta_ = np.arctan2(sin_theta, cos_theta)
+
+        if sin_theta > 1e-6:
+            axis = axis / sin_theta
+        else:
+            axis = np.zeros(3)
+
+        orientation_error = theta_ * axis
+
+        # Full error
+        error = np.array([orientation_error[0], orientation_error[1], orientation_error[2], error[0], error[1], error[2]])
         err_norm = np.linalg.norm(error)
         print(f"Iter {i:03}: error = {err_norm:.6f}")
+
+        if(err_norm < best_ans[1]):
+            best_ans = (theta, err_norm)
 
         if err_norm < tol:
             return theta, True  # Success
@@ -127,4 +155,5 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
         else:
             theta += np.random.uniform(-0.5, 0.5, size=theta.shape)
 
-    return theta, False  # Did not converge
+    print(f"Iter 200: error = {best_ans[1]}")
+    return best_ans[0], False  # Did not converge
