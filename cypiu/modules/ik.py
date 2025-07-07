@@ -99,6 +99,8 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
                 (-np.radians(145), np.radians(145)),
                 (-np.radians(165), np.radians(165)),
                 (-np.radians(180), np.radians(180))]
+    lower_bounds = np.array([low for low, _ in joint_limits])
+    upper_bounds = np.array([high for _, high in joint_limits])
 
     for i in range(max_iters):
         # Compute forward kinematics position
@@ -149,9 +151,7 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
         alpha = line_search(theta, dtheta, p_desired)
         if alpha > 0:
             theta += alpha * dtheta
-            theta = np.clip(theta,
-                            [low for low, _ in joint_limits],
-                            [high for _, high in joint_limits])
+            theta = np.clip(theta, lower_bounds, upper_bounds)
         else:
             theta += np.random.uniform(-0.5, 0.5, size=theta.shape)
 
