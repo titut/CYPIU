@@ -83,6 +83,8 @@ class GetObject(Node):
 
         soln, status = inverse_kinematics([0, 0, 0, 0, 0, 0], desired_ee)
         
+        soln[5] = 0
+
         msg = Float32MultiArray()
         msg.data = rad2deg(soln)
         self.publisher.publish(msg)
