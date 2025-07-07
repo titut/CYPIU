@@ -132,7 +132,7 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
         print(f"Iter {i:03}: error = {err_norm:.6f}")
 
         if(err_norm < best_ans[1]):
-            best_ans = (theta, err_norm)
+            best_ans = (theta.copy(), err_norm)
 
         if err_norm < tol:
             return theta, True  # Success
@@ -150,10 +150,14 @@ def inverse_kinematics(current_angle_pos, desired_ee, tol=1e-3, max_iters=200, d
 
         alpha = line_search(theta, dtheta, p_desired)
         if alpha > 0:
-            theta += alpha * dtheta
-            theta = np.clip(theta, lower_bounds, upper_bounds)
+            theta_temp = theta +  alpha * dtheta
+            theta_temp = np.clip(theta_temp, lower_bounds, upper_bounds)
+            if np.linalg.norm(theta - theta_temp) < 0.001:
+                theta += np.random.uniform(-1, 1, size=theta.shape)
+            else: 
+                theta = theta_temp
         else:
-            theta += np.random.uniform(-0.5, 0.5, size=theta.shape)
+            theta += np.random.uniform(-1, 1, size=theta.shape)
 
     print(f"Iter 200: error = {best_ans[1]}")
     return best_ans[0], False  # Did not converge
