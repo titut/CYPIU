@@ -8,6 +8,7 @@ from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
 
 import random
+import cypiu.modules.gpt as gpt
 
 class CmdGui(Node):
     """
@@ -29,6 +30,8 @@ class CmdGui(Node):
                 self.home()
             if user_input == "look":
                 self.look()
+            else:
+                self.ask_gpt(user_input)
 
     def random_location(self):
         random_joint_angles = []
@@ -49,6 +52,10 @@ class CmdGui(Node):
         msg = Float32MultiArray()
         msg.data = [0.0, 45.0, -70.0, -40.0, 0.0, 0.0]
         self.publisher.publish(msg)
+
+    def ask_gpt(self, sentence):
+        command = gpt.parse_sentence(sentence)
+        print(command)
 
 def main(args=None):
     rclpy.init(args=args)
