@@ -1,3 +1,7 @@
+"""
+Modules for function interaction with OpenAI API
+"""
+
 from openai import OpenAI
 client = OpenAI()
 

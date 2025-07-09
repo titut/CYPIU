@@ -54,7 +54,7 @@ class CmdGui(Node):
         self.publisher.publish(msg)
 
     def ask_gpt(self, sentence):
-        command = gpt.parse_sentence(sentence)
+        command = gpt.parse_command(sentence)
         print(command)
 
 def main(args=None):
