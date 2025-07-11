@@ -61,7 +61,7 @@ class ApriltagService(Node):
                 rclpy.time.Time())
         except TransformException as ex:
             self.get_logger().info(
-                f'Could not transform camera to {request.object}: {ex}')
+                f'Could not transform camera to object: {ex}')
             response.success = False
             response.message = "Unable to find transform."
             return response
