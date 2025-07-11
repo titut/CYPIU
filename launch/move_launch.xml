@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
   <node pkg="cypiu" exec="move" name="move"/>
-  <node pkg="cypiu" exec="cmd_gui" name="cmd_gui"/>
   <node pkg="cypiu" exec="apriltag_service" name="apriltag_service"/>
 </launch>
