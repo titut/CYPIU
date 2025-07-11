@@ -26,7 +26,7 @@ setup(
             "move = cypiu.movearm:main", 
             "random = cypiu.random_arm_location:main",
             "teleop = cypiu.teleop:main",
-            "object = cypiu.get_object:main",
+            "apriltag_service = cypiu.apriltag_service:main",
             "cmd_gui = cypiu.cmd_gui:main"
         ],
     },

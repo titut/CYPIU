@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Float32MultiArray
+from std_srvs.srv import SetBool
 
 import random
 import cypiu.modules.gpt as gpt
@@ -20,6 +21,9 @@ class CmdGui(Node):
 
         # Initialize publisher
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
+
+        # Initialize Apriltag Service Client
+        self.cli = self.create_client(SetBool, 'apriltag_service')
 
         while True:
             user_input = input("Action: ")
@@ -55,7 +59,14 @@ class CmdGui(Node):
 
     def ask_gpt(self, sentence):
         command = gpt.parse_command(sentence)
-        print(command)
+        self.get_logger().info(f"Parsed Command: {command}")
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('service not available, waiting again...')
+        req = SetBool.Request()
+        req.data = True
+        response = self.cli.call_async(req).result()
+        print(response)
+        
 
 def main(args=None):
     rclpy.init(args=args)

@@ -1,5 +1,5 @@
 """
-ROS node to generate random configurations for myCobot 280
+ROS node to use Apriltag libraries
 """
 
 # ROS node import
@@ -10,13 +10,13 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
 # ROS Messages
 from std_msgs.msg import Float32MultiArray
+from std_srvs.srv import SetBool
 
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 
 from apriltag_msgs.msg import AprilTagDetectionArray
-from apriltag_msgs.msg import AprilTagDetection
 
 from cypiu.modules.fk import forward_kinematics
 from cypiu.modules.ik import inverse_kinematics
@@ -24,13 +24,13 @@ from cypiu.modules.util import deg2rad, rad2deg
 
 import numpy as np
 
-class GetObject(Node):
+class ApriltagService(Node):
     """
     Class to initialize and establish subscriber/publisher interaction
     """
 
     def __init__(self):
-        super().__init__("get_object")
+        super().__init__("apriltag_service")
 
         qos_profile = QoSProfile(
             depth=1,
@@ -39,30 +39,34 @@ class GetObject(Node):
         )
         self.current_angles = [-1, -1, -1, -1, -1, -1]
 
-        self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
-
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
         self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
-        self.detection_subscriber = self.create_subscription(AprilTagDetectionArray, '/apriltag/detections', self.on_detections, qos_profile)
+        self.srv = self.create_service(SetBool, 'apriltag_service', self.find_object)
 
     def on_current_angles(self, msg):
         self.current_angles = msg.data
 
-    def on_detections(self, msg: AprilTagDetectionArray):
+    def find_object(self, request, response):
         if self.current_angles[0] == -1:
-            return
+            response.success = False
+            response.message = "Current angles not initialized."
+            return response
+        # Find Transform
         try:
             t = self.tf_buffer.lookup_transform(
                 "camera",
                 "object",
-                msg.header.stamp)
+                rclpy.time.Time())
         except TransformException as ex:
             self.get_logger().info(
-                f'Could not transform camera to object: {ex}')
-            return
+                f'Could not transform camera to {request.object}: {ex}')
+            response.success = False
+            response.message = "Unable to find transform."
+            return response
     
+        # Determine Apriltag pose with regards to World frame
         t_bc = np.array([
             [1, 0, 0, t.transform.translation.x],
             [0, 1, 0, t.transform.translation.y],
@@ -81,26 +85,27 @@ class GetObject(Node):
         self.get_logger().info(f"t_bc = {t_bc}")
         self.get_logger().info(f"desired_ee = {desired_ee}")
 
+        # Inverse Kinematics
         soln, status = inverse_kinematics([0, 0, 0, 0, 0, 0], desired_ee)
-        
         soln[5] = 0
 
-        msg = Float32MultiArray()
-        msg.data = rad2deg(soln)
-        self.publisher.publish(msg)
+        response.success = True
+        response.message = str(rad2deg(soln))
+
+        return response
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    get_object = GetObject()
+    apriltag_service = ApriltagService()
 
-    rclpy.spin(get_object)
+    rclpy.spin(apriltag_service)
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
-    get_object.destroy_node()
+    apriltag_service.destroy_node()
     rclpy.shutdown()
 
 
