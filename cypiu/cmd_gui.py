@@ -64,9 +64,11 @@ class CmdGui(Node):
             self.get_logger().info('service not available, waiting again...')
         req = SetBool.Request()
         req.data = True
-        response = self.cli.call_async(req).result()
+        future = self.cli.call_async(req)
+        rclpy.spin_until_future_complete(self, future)
+        response = future.result()
         print(response)
-        
+
 
 def main(args=None):
     rclpy.init(args=args)
