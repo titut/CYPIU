@@ -9,6 +9,7 @@ from std_msgs.msg import Float32MultiArray
 from std_srvs.srv import SetBool
 
 import random
+import ast
 import cypiu.modules.gpt as gpt
 
 class CmdGui(Node):
@@ -67,7 +68,10 @@ class CmdGui(Node):
         future = self.cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         response = future.result()
-        print(response)
+        if response.success:
+            msg = Float32MultiArray()
+            msg.data = ast.literal_eval(response.message)
+            self.publisher.publish(msg)
 
 
 def main(args=None):
