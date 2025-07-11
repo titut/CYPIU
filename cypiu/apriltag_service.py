@@ -92,6 +92,8 @@ class ApriltagService(Node):
         response.success = True
         response.message = str(rad2deg(soln))
 
+        self.get_logger().info(f"Response = {response}")
+
         return response
 
 

@@ -30,9 +30,9 @@ class CmdGui(Node):
             print("\n")
             if user_input == "random":
                 self.random_location()
-            if user_input == "home":
+            elif user_input == "home":
                 self.home()
-            if user_input == "look":
+            elif user_input == "look":
                 self.look()
             else:
                 self.ask_gpt(user_input)
