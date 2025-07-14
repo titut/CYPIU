@@ -69,10 +69,10 @@ class CmdGui(Node):
         future = self.cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         response = future.result()
-        """ if response.success:
+        if response.success:
             msg = Float32MultiArray()
             msg.data = response.joint_angles
-            self.publisher.publish(msg) """
+            self.publisher.publish(msg)
 
 def main(args=None):
     rclpy.init(args=args)

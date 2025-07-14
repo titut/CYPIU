@@ -59,7 +59,7 @@ class ApriltagService(Node):
         try:
             t = self.tf_buffer.lookup_transform(
                 "camera",
-                "object",
+                request.object,
                 rclpy.time.Time())
         except TransformException as ex:
             self.get_logger().info(
