@@ -10,7 +10,7 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
 
 # ROS Messages
 from std_msgs.msg import Float32MultiArray
-from std_srvs.srv import SetBool
+from cypiu_interfaces.srv import Command
 
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
@@ -43,7 +43,7 @@ class ApriltagService(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
         self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
-        self.srv = self.create_service(SetBool, 'apriltag_service', self.find_object)
+        self.srv = self.create_service(Command, 'apriltag_service', self.find_object)
 
     def on_current_angles(self, msg):
         self.current_angles = msg.data
@@ -52,6 +52,7 @@ class ApriltagService(Node):
         if self.current_angles[0] == -1:
             response.success = False
             response.message = "Current angles not initialized."
+            response.joint_angles = [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]
             return response
         # Find Transform
         try:
@@ -64,6 +65,7 @@ class ApriltagService(Node):
                 f'Could not transform camera to object: {ex}')
             response.success = False
             response.message = "Unable to find transform."
+            response.joint_angles = [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]
             return response
     
         # Determine Apriltag pose with regards to World frame
@@ -90,7 +92,8 @@ class ApriltagService(Node):
         soln[5] = 0
 
         response.success = True
-        response.message = str(rad2deg(soln))
+        response.message = f"Valid solution reached: {str(rad2deg(soln))}"
+        response.joint_angles = rad2deg(soln)
 
         self.get_logger().info(f"Response = {response}")
 

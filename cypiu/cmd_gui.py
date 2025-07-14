@@ -6,7 +6,7 @@ import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Float32MultiArray
-from std_srvs.srv import SetBool
+from cypiu_interfaces.srv import Command
 
 import random
 import ast
@@ -63,16 +63,16 @@ class CmdGui(Node):
         self.get_logger().info(f"Parsed Command: {command}")
         while not self.cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
-        req = SetBool.Request()
-        req.data = True
+        req = Command.Request()
+        req.action = command[0]
+        req.object = command[1]
         future = self.cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         response = future.result()
-        if response.success:
+        """ if response.success:
             msg = Float32MultiArray()
-            msg.data = ast.literal_eval(response.message)
-            self.publisher.publish(msg)
-
+            msg.data = response.joint_angles
+            self.publisher.publish(msg) """
 
 def main(args=None):
     rclpy.init(args=args)
