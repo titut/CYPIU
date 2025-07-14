@@ -69,6 +69,7 @@ class CmdGui(Node):
         future = self.cli.call_async(req)
         rclpy.spin_until_future_complete(self, future)
         response = future.result()
+        self.get_logger().info(f"Response: {response}")
         if response.success:
             msg = Float32MultiArray()
             msg.data = response.joint_angles
