@@ -49,6 +49,7 @@ class ApriltagService(Node):
         self.current_angles = msg.data
 
     def find_object(self, request, response):
+        self.get_logger().info(f"Request: {request}")
         if self.current_angles[0] == -1:
             response.success = False
             response.message = "Current angles not initialized."
