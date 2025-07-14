@@ -24,7 +24,7 @@ class CmdGui(Node):
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
 
         # Initialize Apriltag Service Client
-        self.cli = self.create_client(SetBool, 'apriltag_service')
+        self.cli = self.create_client(Command, 'apriltag_service')
 
         while True:
             user_input = input("Action: ")
