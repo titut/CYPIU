@@ -44,6 +44,7 @@ class CmdGui(Node):
                 self.ask_gpt(user_input)
 
     def on_current_angles(self, msg):
+        print("HELLO")
         self.current_angles = msg.data
 
     def random_location(self):
