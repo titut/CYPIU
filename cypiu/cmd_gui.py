@@ -23,6 +23,9 @@ class CmdGui(Node):
         # Initialize publisher
         self.publisher = self.create_publisher(Float32MultiArray, 'joint_angles', 10)
 
+        self.current_angles = [-1, -1, -1, -1, -1, -1]
+        self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
+
         # Initialize Apriltag Service Client
         self.cli = self.create_client(Command, 'apriltag_service')
 
@@ -35,8 +38,13 @@ class CmdGui(Node):
                 self.home()
             elif user_input == "look":
                 self.look()
+            elif user_input == "custom":
+                self.custom()
             else:
                 self.ask_gpt(user_input)
+
+    def on_current_angles(self, msg):
+        self.current_angles = msg.data
 
     def random_location(self):
         random_joint_angles = []
@@ -56,6 +64,18 @@ class CmdGui(Node):
     def look(self):
         msg = Float32MultiArray()
         msg.data = [0.0, 45.0, -70.0, -30.0, 0.0, 0.0]
+        self.publisher.publish(msg)
+
+    def custom(self):
+        if self.current_angles[0] < 0:
+            print("Haven't received current angles")
+            return
+        joint_input = input("Joint no: ")
+        amount_input = input("Amount: ")
+        new_angles = self.current_angles.copy()
+        new_angles[int(joint_input)] = float(amount_input)
+        msg = Float32MultiArray()
+        msg.data = new_angles
         self.publisher.publish(msg)
 
     def ask_gpt(self, sentence):
