@@ -70,7 +70,7 @@ class CmdGui(Node):
         rclpy.spin_until_future_complete(self, future)
         response = future.result()
         self.get_logger().info(f"Response: {response}")
-        self.get_logger().info(type(response.joint_angles))
+        self.get_logger().info(list(response.joint_angles))
         """if response.success:
             msg = Float32MultiArray()
             msg.data = response.joint_angles
