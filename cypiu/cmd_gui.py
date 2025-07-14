@@ -55,7 +55,7 @@ class CmdGui(Node):
 
     def look(self):
         msg = Float32MultiArray()
-        msg.data = [0.0, 45.0, -70.0, -40.0, 0.0, 0.0]
+        msg.data = [0.0, 45.0, -70.0, -30.0, 0.0, 0.0]
         self.publisher.publish(msg)
 
     def ask_gpt(self, sentence):
