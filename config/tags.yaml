@@ -18,5 +18,5 @@
 
         # optional list of tags
         tag:
-            ids: [0]            # tag ID
-            frames: [keys]  # optional frame name
+            ids: [6, 7, 3, 1, 2, 8 ,4]            # tag ID
+            frames: [phone, button, mouse, pen, kindle, keys, socks]  # optional frame name
