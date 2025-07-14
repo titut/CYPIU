@@ -19,4 +19,4 @@
         # optional list of tags
         tag:
             ids: [0]            # tag ID
-            frames: [object]  # optional frame name
+            frames: [keys]  # optional frame name
