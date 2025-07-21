@@ -11,10 +11,11 @@ class ObjDetection(Node):
         super().__init__("obj_detection")
         self.bridge = CvBridge()
         self.sub = self.create_subscription(
-            Image, "/camera1/image_raw", self.image_callback, qos_profile_sensor_data
+            Image, "camera1/image_raw", self.image_callback, qos_profile_sensor_data
         )
 
     def image_callback(self, msg):
+        self.get_logger().info("Image Received!")
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
             cv2.imshow("Webcam Stream", cv_image)
