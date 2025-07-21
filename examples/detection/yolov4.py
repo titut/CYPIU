@@ -1,12 +1,15 @@
 import numpy as np
 import cv2
 import onnxruntime as ort
+import os
 
-session = ort.InferenceSession("yolov4.onnx")
+path_to_yolo = os.path.join(os.path.expanduser("~"), "yolo_model")
+
+session = ort.InferenceSession(os.path.join(path_to_yolo, "yolov4.onnx"))
 input_size = 416
 
 # Load class names
-with open("coco.names", "r") as f:
+with open(os.path.join(path_to_yolo, "coco.names"), "r") as f:
     class_names = [c.strip() for c in f.readlines()]
 
 
@@ -99,7 +102,7 @@ def draw_bbox(image, results):
     return image
 
 
-original_image = cv2.imread("input.jpg")
+original_image = cv2.imread(os.path.join(path_to_yolo, "input.jpg"))
 
 image_pp = image_preprocess(np.copy(original_image))
 image_data = image_pp[np.newaxis, ...].astype(np.float32)
