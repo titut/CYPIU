@@ -5,6 +5,9 @@ import cv2
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
+import cypiu.modules.yolov4 as yolov4
+import numpy as np
+
 
 class ObjDetection(Node):
     def __init__(self):
@@ -18,7 +21,15 @@ class ObjDetection(Node):
         self.get_logger().info("Image Received!")
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-            cv2.imshow("Webcam Stream", cv_image)
+
+            image_pp = yolov4.image_preprocess(np.copy(cv_image))
+            image_data = image_pp[np.newaxis, ...].astype(np.float32)
+
+            inference = yolov4.make_inference(image_data)
+            bbox_info = yolov4.postprocess(inference)
+            final_image = yolov4.draw_bbox(image_pp, bbox_info)
+
+            cv2.imshow("Webcam Stream", final_image)
             cv2.waitKey(1)
         except Exception as e:
             self.get_logger().error("cv_bridge exception: %s" % e)
