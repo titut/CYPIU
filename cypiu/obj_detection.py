@@ -19,6 +19,7 @@ class ObjDetection(Node):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
             cv2.imshow("Webcam Stream", cv_image)
+            cv2.waitKey(1)
         except Exception as e:
             self.get_logger().error("cv_bridge exception: %s" % e)
 
