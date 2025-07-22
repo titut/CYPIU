@@ -28,7 +28,7 @@ class ObjDetection(Node):
             inference = yolov4.make_inference(image_data)
             bbox_info = yolov4.postprocess(inference)
             final_image = yolov4.draw_bbox(image_pp, bbox_info)
-
+            self.get_logger().info("Processing Finished!")
             cv2.imshow("Webcam Stream", final_image)
             cv2.waitKey(1)
         except Exception as e:
