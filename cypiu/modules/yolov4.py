@@ -99,4 +99,6 @@ def draw_bbox(image, results):
             image, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2
         )
 
-    return image
+    final_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+    return final_image
