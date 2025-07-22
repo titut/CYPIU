@@ -22,7 +22,7 @@ class ObjDetection(Node):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
-            image_pp = yolov4.image_preprocess(np.copy(cv_image))
+            image_pp = yolov4.image_preprocess(np.copy(cv_image)).astype(np.float32)
             image_data = image_pp[np.newaxis, ...].astype(np.float32)
 
             inference = yolov4.make_inference(image_data)
