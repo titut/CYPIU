@@ -96,6 +96,7 @@ class CmdGui(Node):
             self.publisher.publish(msg)
         time.sleep(3)
         self.claw(False)
+        time.sleep(3)
         self.look()
 
     def claw(self, bool):
