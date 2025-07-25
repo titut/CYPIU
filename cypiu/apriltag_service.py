@@ -87,8 +87,8 @@ class ApriltagService(Node):
 
         t_sc = t_sb @ t_bc
         desired_ee = t_sc[0:3, 3]
-        if desired_ee[2] < 0.15:
-            desired_ee[2] = 0.15
+        if desired_ee[2] < 0.2:
+            desired_ee[2] = 0.2
         self.get_logger().info(f"t_sb = {t_sb}")
         self.get_logger().info(f"t_bc = {t_bc}")
         self.get_logger().info(f"desired_ee = {desired_ee}")
