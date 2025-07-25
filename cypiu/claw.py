@@ -32,14 +32,13 @@ class ClawService(Node):
         False: Close Claw
         """
         if request.data:
-            self.servo.angle = 90
-            response.success = True
+            self.servo.angle = -90
             response.message = "Claw opened!"
         else:
-            self.servo.angle = -90
-            response.success = True
+            self.servo.angle = 90
             response.message = "Claw closed!"
 
+        response.success = True
         return response
 
 
