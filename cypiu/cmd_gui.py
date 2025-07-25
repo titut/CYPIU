@@ -77,6 +77,7 @@ class CmdGui(Node):
         self.publisher.publish(msg)
 
     def ask_gpt(self, sentence):
+        self.claw(True)
         command = gpt.parse_command(sentence)
         self.get_logger().info(f"Parsed Command: {command}")
         while not self.cli.wait_for_service(timeout_sec=1.0):
@@ -90,11 +91,12 @@ class CmdGui(Node):
         self.get_logger().info(f"Response: {response}")
         self.get_logger().info(f"{list(response.joint_angles)}")
         if response.success:
-            self.claw(True)
             msg = Float32MultiArray()
             msg.data = list(response.joint_angles)
             self.publisher.publish(msg)
         time.sleep(3)
+        self.claw(False)
+        self.look()
 
     def claw(self, bool):
         req = SetBool.Request()
