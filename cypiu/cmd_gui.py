@@ -10,7 +10,7 @@ from cypiu_interfaces.srv import Command
 from std_srvs.srv import SetBool
 
 import random
-import ast
+import time
 import cypiu.modules.gpt as gpt
 
 
@@ -90,9 +90,11 @@ class CmdGui(Node):
         self.get_logger().info(f"Response: {response}")
         self.get_logger().info(f"{list(response.joint_angles)}")
         if response.success:
+            self.claw(True)
             msg = Float32MultiArray()
             msg.data = list(response.joint_angles)
             self.publisher.publish(msg)
+        time.sleep(3)
 
     def claw(self, bool):
         req = SetBool.Request()

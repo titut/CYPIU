@@ -24,6 +24,7 @@ from cypiu.modules.util import deg2rad, rad2deg
 
 import numpy as np
 
+
 class ApriltagService(Node):
     """
     Class to initialize and establish subscriber/publisher interaction
@@ -35,15 +36,17 @@ class ApriltagService(Node):
         qos_profile = QoSProfile(
             depth=1,
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
-            history=QoSHistoryPolicy.KEEP_LAST
+            history=QoSHistoryPolicy.KEEP_LAST,
         )
         self.current_angles = [-1, -1, -1, -1, -1, -1]
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
-        self.angle_subsciber = self.create_subscription(Float32MultiArray, 'current_angles', self.on_current_angles, 10)
-        self.srv = self.create_service(Command, 'apriltag_service', self.find_object)
+        self.angle_subsciber = self.create_subscription(
+            Float32MultiArray, "current_angles", self.on_current_angles, 10
+        )
+        self.srv = self.create_service(Command, "apriltag_service", self.find_object)
 
     def on_current_angles(self, msg):
         self.current_angles = msg.data
@@ -58,32 +61,34 @@ class ApriltagService(Node):
         # Find Transform
         try:
             t = self.tf_buffer.lookup_transform(
-                "camera",
-                request.object,
-                rclpy.time.Time())
+                "camera", request.object, rclpy.time.Time()
+            )
         except TransformException as ex:
             self.get_logger().info(
-                f'Could not transform camera to {request.object}: {ex}')
+                f"Could not transform camera to {request.object}: {ex}"
+            )
             response.success = False
             response.message = "Unable to find transform."
             response.joint_angles = [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]
             return response
-    
+
         # Determine Apriltag pose with regards to World frame
-        t_bc = np.array([
-            [1, 0, 0, t.transform.translation.x],
-            [0, 1, 0, t.transform.translation.y],
-            [0, 0, 1, t.transform.translation.z],
-            [0, 0, 0, 1],
-        ])
+        t_bc = np.array(
+            [
+                [1, 0, 0, t.transform.translation.x],
+                [0, 1, 0, t.transform.translation.y],
+                [0, 0, 1, t.transform.translation.z],
+                [0, 0, 0, 1],
+            ]
+        )
 
         cur_angles = deg2rad(self.current_angles)
         cur_coords, t_sb = forward_kinematics(cur_angles)
 
         t_sc = t_sb @ t_bc
         desired_ee = t_sc[0:3, 3]
-        if desired_ee[2] < 0.08:
-            desired_ee[2] = 0.08
+        if desired_ee[2] < 0.15:
+            desired_ee[2] = 0.15
         self.get_logger().info(f"t_sb = {t_sb}")
         self.get_logger().info(f"t_bc = {t_bc}")
         self.get_logger().info(f"desired_ee = {desired_ee}")
