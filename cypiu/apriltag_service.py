@@ -72,6 +72,15 @@ class ApriltagService(Node):
             response.joint_angles = [-1.0, -1.0, -1.0, -1.0, -1.0, -1.0]
             return response
 
+        t_cam = np.array(
+            [
+                [1, 0, 0, 0],
+                [0, 1, 0, -0.09],
+                [0, 0, 1, 0.05],
+                [0, 0, 0, 1],
+            ]
+        )
+
         # Determine Apriltag pose with regards to World frame
         t_bc = np.array(
             [
@@ -85,7 +94,7 @@ class ApriltagService(Node):
         cur_angles = deg2rad(self.current_angles)
         cur_coords, t_sb = forward_kinematics(cur_angles)
 
-        t_sc = t_sb @ t_bc
+        t_sc = t_sb @ t_cam @ t_bc
         desired_ee = t_sc[0:3, 3]
         if desired_ee[2] < 0.2:
             desired_ee[2] = 0.2
