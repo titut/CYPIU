@@ -2,4 +2,5 @@
 <launch>
   <node pkg="cypiu" exec="move" name="move"/>
   <node pkg="cypiu" exec="apriltag_service" name="apriltag_service"/>
+  <node pkg="cypiu" exec="claw" name="claw_service"/>
 </launch>
