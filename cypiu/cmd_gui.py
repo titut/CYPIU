@@ -94,7 +94,7 @@ class CmdGui(Node):
             msg = Float32MultiArray()
             msg.data = list(response.joint_angles)
             self.publisher.publish(msg)
-        time.sleep(3)
+        time.sleep(5)
         self.claw(False)
         time.sleep(3)
         self.look()
