@@ -24,10 +24,6 @@ class ClawService(Node):
         # Inititalize servo connection GPIO Pin #18
         self.servo = AngularServo(18, min_pulse_width=0.0006, max_pulse_width=0.0023)
 
-        self.angle_subsciber = self.create_subscription(
-            Float32MultiArray, "current_angles", self.on_current_angles, 10
-        )
-
         self.srv = self.create_service(SetBool, "claw_service", self.claw)
 
     def claw(self, request, response):
