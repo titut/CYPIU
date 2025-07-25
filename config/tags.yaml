@@ -19,4 +19,4 @@
         # optional list of tags
         tag:
             ids: [6, 7, 3, 1, 2, 8 ,4]            # tag ID
-            frames: [phone, button, mouse, pen, kindle, keys, socks]  # optional frame name
+            frames: [phone, button, mouse, banana, kindle, keys, socks]  # optional frame name
