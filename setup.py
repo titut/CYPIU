@@ -29,6 +29,7 @@ setup(
             "apriltag_service = cypiu.apriltag_service:main",
             "cmd_gui = cypiu.cmd_gui:main",
             "yolo = cypiu.obj_detection:main",
+            "claw = cypiu.claw:main",
         ],
     },
 )
