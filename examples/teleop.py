@@ -28,22 +28,30 @@ dualsense.init()
 dualsense.left_joystick_changed += joystick_handler
 
 while not dualsense.state.R1:
+    # Right
     if joystick_state_x > 0.5:
         mc.jog_coord(2, 0, 10)
+    # Left
     elif joystick_state_x < -0.5:
         mc.jog_coord(2, 1, 10)
+    # Forward
     elif joystick_state_y > 0.5:
         mc.jog_coord(1, 1, 10)
+    # Backward
     elif joystick_state_y < -0.5:
         mc.jog_coord(1, 0, 10)
+    # Up
+    elif dualsense.state.L2:
+        mc.jog_coord(1, 1, 10)
+    # Down
+    elif dualsense.state.R2:
+        mc.jog_coord(3, 0, 10)
+    # Stop
     else:
         mc.stop()
 
+    # Home
     if dualsense.state.cross:
         mc.send_angles([0, 40, -60, -20, 0, 0], 30)
-
-    print(dualsense.state.R2)
-
-    time.sleep(0.05)
 
 dualsense.close()
