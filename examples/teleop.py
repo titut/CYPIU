@@ -29,15 +29,13 @@ dualsense.left_joystick_changed += joystick_handler
 
 while not dualsense.state.R1:
     if joystick_state_x > 0.5:
-        print("Moving right")
+        mc.jog_coord(2, 0, 10)
     elif joystick_state_x < -0.5:
-        print("Moving left")
-    else:
-        print("Not moving horizontally")
-    if joystick_state_y > 0.5:
+        mc.jog_coord(2, 1, 10)
+    elif joystick_state_y > 0.5:
         mc.jog_coord(1, 1, 10)
     elif joystick_state_y < -0.5:
-        print("Moving backward")
+        mc.jog_coord(1, 0, 10)
     else:
         mc.stop()
 
