@@ -18,7 +18,7 @@ def joystick_handler(state_x, state_y):
 
 mc = MyCobot280("/dev/ttyAMA0", 1000000)
 angles = mc.get_angles()
-mc.send_angles([0, 40, 0, 0, 0, 0], 30)
+mc.send_angles([0, 40, -60, -20, 0, 0], 30)
 
 # get dualsense instance
 dualsense = pydualsense()
@@ -35,11 +35,11 @@ while not dualsense.state.R1:
     else:
         print("Not moving horizontally")
     if joystick_state_y > 0.5:
-        print("Moving forward")
+        mc.jog_coord(1, 1, 10)
     elif joystick_state_y < -0.5:
         print("Moving backward")
     else:
-        print("Not moving vertically")
+        mc.stop()
 
     time.sleep(0.5)
 
