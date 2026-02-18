@@ -39,6 +39,11 @@ while not dualsense.state.R1:
     else:
         mc.stop()
 
-    time.sleep(0.5)
+    if dualsense.state.cross:
+        mc.send_angles([0, 40, -60, -20, 0, 0], 30)
+
+    print(dualsense.state.R2)
+
+    time.sleep(0.05)
 
 dualsense.close()
